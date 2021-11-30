@@ -15,7 +15,7 @@ server.use(express.json())
 
 
 server.use("/author", authorRouter)
-console.table(listEndpoints(server))
+console.log(listEndpoints(server))
 
 
 

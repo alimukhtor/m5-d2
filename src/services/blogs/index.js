@@ -60,13 +60,19 @@ authorRouter.get("/:authorId", (request, response)=> {
 
 
 authorRouter.put("/:authorId", (request, response)=> {
-    
+    const author = JSON.parse(fs.readFileSync(authorJSONPath))
+    const filterId = author.findIndex(index => index.id === request.params.authorId)
+    const updateAuthor = {...author[filterId], ...request.body}
+
+    author[filterId] = updateAuthor
+    fs.writeFileSync(authorJSONPath, JSON.stringify(author))
+    response.send(updateAuthor)
 })
 
 
 
 authorRouter.delete("/:authorId", (request, response)=> {
-    
+    const author = JSON.parse(fs.readFileSync(authorJSONPath))
 })
 
 
