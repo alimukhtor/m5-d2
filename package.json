@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon -e js ./src/server.js"
+    "dev": "nodemon -e js ./src/main.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "express-list-endpoints": "^6.0.0",
+    "nodemon": "^2.0.15",
     "uniqid": "^5.4.0"
   }
 }
