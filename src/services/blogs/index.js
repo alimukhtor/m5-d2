@@ -73,6 +73,10 @@ authorRouter.put("/:authorId", (request, response)=> {
 
 authorRouter.delete("/:authorId", (request, response)=> {
     const author = JSON.parse(fs.readFileSync(authorJSONPath))
+    const restOfUsers  = author.filter(users => users.id !== request.params.authorId)
+    fs.writeFileSync(authorJSONPath, JSON.stringify(restOfUsers))
+
+    response.status(204).send()
 })
 
 
