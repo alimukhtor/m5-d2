@@ -47,6 +47,8 @@ authorRouter.get("/", (request, response)=> {
 
 
 
+// Getting Single Author........
+
 
 authorRouter.get("/:authorId", (request, response)=> {
     console.log("user id is : ", request.params.authorId)
@@ -57,7 +59,7 @@ authorRouter.get("/:authorId", (request, response)=> {
     response.send(findAuthorId)
 })
 
-
+// Update author here .............
 
 authorRouter.put("/:authorId", (request, response)=> {
     const author = JSON.parse(fs.readFileSync(authorJSONPath))
@@ -69,6 +71,8 @@ authorRouter.put("/:authorId", (request, response)=> {
     response.send(updateAuthor)
 })
 
+
+// Delete author here.....
 
 
 authorRouter.delete("/:authorId", (request, response)=> {
