@@ -35,6 +35,9 @@ authorRouter.post("/", (request, response)=> {
 
 
 // Getting Here ......
+
+
+
 authorRouter.get("/", (request, response)=> {
     const readJsonFile = fs.readFileSync(authorJSONPath)
     const authorArray = JSON.parse(readJsonFile)
@@ -46,7 +49,12 @@ authorRouter.get("/", (request, response)=> {
 
 
 authorRouter.get("/:authorId", (request, response)=> {
-    
+    console.log("user id is : ", request.params.authorId)
+    const author = JSON.parse(fs.readFileSync(authorJSONPath))
+
+
+    const findAuthorId = author.find(i => i.id === request.params.authorId)
+    response.send(findAuthorId)
 })
 
 
