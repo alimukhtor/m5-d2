@@ -4,10 +4,15 @@ import listEndpoints from "express-list-endpoints"
 
 import authorRouter from "./services/blogs/index.js"
 
+import cors from 'cors'
+
+import {badRequestHandler, unauthorizedHandler, notFoundHandler} from './handleErrors.js'
+
 const server = express()
 
 const port = 3004
 
+server.use(cors)
 server.use(express.json())
 
 
@@ -17,7 +22,16 @@ server.use(express.json())
 server.use("/author", authorRouter)
 console.table(listEndpoints(server))
 
-// 
+// Endpoints here
+
+
+// Errors are here
+
+server.use(badRequestHandler)
+server.use(unauthorizedHandler)
+server.use(notFoundHandler)
+
+// Errors here
 
 server.listen(port, ()=> {
     console.log(`Server is running on port ${port}`);

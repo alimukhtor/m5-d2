@@ -20,8 +20,10 @@
   },
   "homepage": "https://github.com/alimukhtor/m5-d2#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-list-endpoints": "^6.0.0",
+    "express-validator": "^6.13.0",
     "nodemon": "^2.0.15",
     "uniqid": "^5.4.0"
   }
