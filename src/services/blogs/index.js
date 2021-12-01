@@ -27,7 +27,7 @@ authorRouter.post("/", authorValidation, (request, response, next)=> {
     try {
         const errorsList = validationResult(request)
         if(!errorsList.isEmpty()){
-            next(createHttpError(400, "Some errors occured in  request body"))
+            next(createHttpError(400, "Some errors occured in  request body", {errorsList}))
         }else{
 
             console.log("Body", request.body);
