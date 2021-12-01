@@ -31,7 +31,12 @@ authorRouter.post("/", authorValidation, (request, response, next)=> {
         }else{
 
             console.log("Body", request.body);
-            const newAuthor = {...request.body, id: uniqid(), avatar: `https://ui-avatars.com/api/?name=${request.params.name}+${request.params.surname}`, createdAt: new Date()}
+            const newAuthor = {
+                ...request.body, 
+                id: uniqid(), 
+                createdAt: new Date(), 
+                updatedAt: new Date()
+            }
             console.log(newAuthor);
         
             const author = JSON.parse(fs.readFileSync(authorJSONPath))
