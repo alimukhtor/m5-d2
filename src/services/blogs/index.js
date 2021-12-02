@@ -1,14 +1,21 @@
 import express from "express" 
-import fs from 'fs'
-import { fileURLToPath } from "url"
-import { dirname, join } from "path"
+
 import uniqid from "uniqid"
+
 import createHttpError from "http-errors"
+
 import { validationResult } from "express-validator"
+
 import { authorValidation } from "./validation.js"
+
 import { getAuthors, writeAuthors} from "../../library/fs-tools.js"
+
 import { saveAuthorsAvatars } from "../../library/fs-tools.js"
+
 import multer from 'multer'
+
+
+
 const authorRouter = express.Router()
 
 
@@ -25,21 +32,68 @@ const authorRouter = express.Router()
 
 // Posting Here....
 
+// const uploader = multer({
+//     fileFilter: (request, file, next) => {
+//       if (file.mimetype !== "image/png") {
+//         next(createHttpError(400, "only pngs are allowed"))
+//       } else {
+//         next(null, true)
+//       }
+//     },
+//   }).single("avatarPic")
+// authorRouter.post("/:authorId/uploadAvatar", uploader, authorValidation, async(request, response, next)=> {
+
+//     try {
+//         console.log("File", request.file);
+//         response.send("ok")
+//         await saveAuthorsAvatars(request.file.originalname, request.file.buffer)
+//         const errorsList = validationResult(request)
+//         if(!errorsList.isEmpty()){
+//             next(createHttpError(400, "Some errors occured in  request body", {errorsList}))
+//         }else{
+
+//             console.log("Body", request.body);
+//             const newAuthor = {
+//                 ...request.body, 
+//                 id: uniqid(), 
+//                 createdAt: new Date(), 
+//                 updatedAt: new Date()
+//             }
+//             console.log(newAuthor);
+        
+//             // const author = JSON.parse(fs.readFileSync(authorJSONPath))
+//             const author = await getAuthors()
+        
+//             author.push(newAuthor)
+//             // fs.writeFileSync(authorJSONPath, JSON.stringify(author))
+//             await writeAuthors()
+//             response.status(201).send({id: newAuthor.id})
+//         }
+        
+//     } catch (error) {
+//         next(error)
+//     }
+   
+// })
+
+// STARTING OF POSTING MULTIPLE FILES
+
 const uploader = multer({
     fileFilter: (request, file, next) => {
-      if (file.mimetype !== "image/png") {
-        next(createHttpError(400, "only pngs are allowed"))
+      if (file.mimetype !== "image/jpeg") {
+        next(createHttpError(400, "only jpgs are allowed"))
       } else {
         next(null, true)
       }
     },
-  }).single("avatarPic")
+  }).array("avatarPic")
 authorRouter.post("/:authorId/uploadAvatar", uploader, authorValidation, async(request, response, next)=> {
 
     try {
-        console.log("File", request.file);
+        console.log("File", request.files);
+        const arrayOfPromises = request.files.map(file => saveAuthorsAvatars(file.originalname, file.buffer))
+        await Promise.all(arrayOfPromises)
         response.send("ok")
-        await saveAuthorsAvatars(request.file.originalname, request.file.buffer)
         const errorsList = validationResult(request)
         if(!errorsList.isEmpty()){
             next(createHttpError(400, "Some errors occured in  request body", {errorsList}))
@@ -69,6 +123,8 @@ authorRouter.post("/:authorId/uploadAvatar", uploader, authorValidation, async(r
    
 })
 
+// END OF POSTING MULTIPLE FILES
+
 
 // Getting Here ......
 
@@ -92,7 +148,7 @@ authorRouter.get("/", async(request, response, next)=> {
 // Getting Single Author........
 
 
-authorRouter.get("/:authorId", async(request, response, next)=> {
+authorRouter.get("/:authorId/uploadAvatar", async(request, response, next)=> {
     try {
         console.log("user id is : ", request.params.authorId)
         // const author = JSON.parse(fs.readFileSync(authorJSONPath))
