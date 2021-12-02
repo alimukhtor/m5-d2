@@ -15,6 +15,8 @@ import { saveAuthorsAvatars } from "../../library/fs-tools.js"
 import multer from 'multer'
 
 
+import {extname} from "path"
+
 
 const authorRouter = express.Router()
 
@@ -32,21 +34,79 @@ const authorRouter = express.Router()
 
 // Posting Here....
 
+const uploader = multer({
+    fileFilter: (request, file, next) => {
+      if (file.mimetype !== "image/png") {
+        next(createHttpError(400, "only pngs are allowed"))
+      } else {
+        next(null, true)
+      }
+    },
+  }).single("avatarPic")
+authorRouter.post("/:authorId/uploadAvatar", uploader, authorValidation, async(req, response, next)=> {
+
+    try {
+        console.log("asd", req.file);
+
+        /**
+         * 
+         *   get author id from req.params
+         *   get file extension by using extname func
+         *   concat author id with extension
+         *   generate accessible link for your image
+         *   find author by id and update avatar field with accessible link
+         * 
+         * 
+         * 
+         */
+        response.send("ok")
+        const fileName = `${req.params.authorId}${extname(req.file.originalname)}` 
+        await saveAuthorsAvatars(fileName, req.file.buffer)
+        const avatar = `http://localhost:3004/img/authors/${fileName}`
+        
+        // const author = JSON.parse(fs.readFileSync(authorJSONPath))
+        const authors = await getAuthors()
+
+        const authorIndex = authors.findIndex(author=>author.id===req.params.authorId) 
+        if(authorIndex!==-1){
+     
+            authors[authorIndex].avatar=avatar
+            
+            // fs.writeFileSync(authorJSONPath, JSON.stringify(author))
+            await writeAuthors(authors)
+            response.status(201).send({avatar})
+
+        }
+        else{
+            next(createHttpError(404),'author is not found')
+        }
+
+     
+        
+    } catch (error) {
+        next(error)
+    }
+   
+})
+
+// STARTING OF POSTING MULTIPLE FILES
+
 // const uploader = multer({
 //     fileFilter: (request, file, next) => {
-//       if (file.mimetype !== "image/png") {
-//         next(createHttpError(400, "only pngs are allowed"))
+//       if (file.mimetype !== "image/jpeg") {
+//         next(createHttpError(400, "only jpgs are allowed"))
 //       } else {
 //         next(null, true)
 //       }
 //     },
-//   }).single("avatarPic")
+//   }).array("avatarPic")
 // authorRouter.post("/:authorId/uploadAvatar", uploader, authorValidation, async(request, response, next)=> {
 
 //     try {
-//         console.log("File", request.file);
+//         console.log("File", request.files);
+//         const arrayOfPromises = request.files.map(file => saveAuthorsAvatars(file.originalname, file.buffer))
+//         await Promise.all(arrayOfPromises)
 //         response.send("ok")
-//         await saveAuthorsAvatars(request.file.originalname, request.file.buffer)
 //         const errorsList = validationResult(request)
 //         if(!errorsList.isEmpty()){
 //             next(createHttpError(400, "Some errors occured in  request body", {errorsList}))
@@ -75,53 +135,6 @@ const authorRouter = express.Router()
 //     }
    
 // })
-
-// STARTING OF POSTING MULTIPLE FILES
-
-const uploader = multer({
-    fileFilter: (request, file, next) => {
-      if (file.mimetype !== "image/jpeg") {
-        next(createHttpError(400, "only jpgs are allowed"))
-      } else {
-        next(null, true)
-      }
-    },
-  }).array("avatarPic")
-authorRouter.post("/:authorId/uploadAvatar", uploader, authorValidation, async(request, response, next)=> {
-
-    try {
-        console.log("File", request.files);
-        const arrayOfPromises = request.files.map(file => saveAuthorsAvatars(file.originalname, file.buffer))
-        await Promise.all(arrayOfPromises)
-        response.send("ok")
-        const errorsList = validationResult(request)
-        if(!errorsList.isEmpty()){
-            next(createHttpError(400, "Some errors occured in  request body", {errorsList}))
-        }else{
-
-            console.log("Body", request.body);
-            const newAuthor = {
-                ...request.body, 
-                id: uniqid(), 
-                createdAt: new Date(), 
-                updatedAt: new Date()
-            }
-            console.log(newAuthor);
-        
-            // const author = JSON.parse(fs.readFileSync(authorJSONPath))
-            const author = await getAuthors()
-        
-            author.push(newAuthor)
-            // fs.writeFileSync(authorJSONPath, JSON.stringify(author))
-            await writeAuthors()
-            response.status(201).send({id: newAuthor.id})
-        }
-        
-    } catch (error) {
-        next(error)
-    }
-   
-})
 
 // END OF POSTING MULTIPLE FILES
 
