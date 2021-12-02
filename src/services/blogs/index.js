@@ -25,8 +25,16 @@ const authorRouter = express.Router()
 
 // Posting Here....
 
-
-authorRouter.post("/:authorId/uploadAvatar", multer().single("profilePic"), authorValidation, async(request, response, next)=> {
+const uploader = multer({
+    fileFilter: (request, file, next) => {
+      if (file.mimetype !== "image/png") {
+        next(createHttpError(400, "only pngs are allowed"))
+      } else {
+        next(null, true)
+      }
+    },
+  }).single("avatarPic")
+authorRouter.post("/:authorId/uploadAvatar", uploader, authorValidation, async(request, response, next)=> {
 
     try {
         console.log("File", request.file);
