@@ -6,23 +6,25 @@ import uniqid from "uniqid"
 import createHttpError from "http-errors"
 import { validationResult } from "express-validator"
 import { authorValidation } from "./validation.js"
+import { getAuthors, writeAuthors} from "../../library/fs-tools.js"
 const authorRouter = express.Router()
 
 
-const currentFilePath = fileURLToPath(import.meta.url) 
+// const dataFolderPath = join(dirname(fileURLToPath(import.meta.url)), '../data') 
+// console.log("Ali", dataFolderPath);
 
-console.log("Current Path is :", currentFilePath);
+// console.log("Current Path is :", currentFilePath);
 
-const currentFolderPath = dirname(currentFilePath)
-console.log("Current folder is :", currentFolderPath);
+// const currentFolderPath = dirname(currentFilePath)
+// console.log("Current folder is :", currentFolderPath);
 
-const authorJSONPath = join(currentFolderPath, "authors.json")
+// const authorJSONPath = join(currentFolderPath, "authors.json")
 
 
 // Posting Here....
 
 
-authorRouter.post("/", authorValidation, (request, response, next)=> {
+authorRouter.post("/", authorValidation, async(request, response, next)=> {
 
     try {
         const errorsList = validationResult(request)
@@ -39,10 +41,12 @@ authorRouter.post("/", authorValidation, (request, response, next)=> {
             }
             console.log(newAuthor);
         
-            const author = JSON.parse(fs.readFileSync(authorJSONPath))
+            // const author = JSON.parse(fs.readFileSync(authorJSONPath))
+            const author = await getAuthors()
         
             author.push(newAuthor)
-            fs.writeFileSync(authorJSONPath, JSON.stringify(author))
+            // fs.writeFileSync(authorJSONPath, JSON.stringify(author))
+            await writeAuthors()
             response.status(201).send({id: newAuthor.id})
         }
         
@@ -57,11 +61,12 @@ authorRouter.post("/", authorValidation, (request, response, next)=> {
 
 
 
-authorRouter.get("/", (request, response, next)=> {
+authorRouter.get("/", async(request, response, next)=> {
     try {
-        const readJsonFile = fs.readFileSync(authorJSONPath)
-        const authorArray = JSON.parse(readJsonFile)
-        console.log("FILE CONTENT: ", JSON.parse(readJsonFile))
+        // const readJsonFile = fs.readFileSync(authorJSONPath)
+        // const authorArray = JSON.parse(readJsonFile)
+        const author = await getAuthors()
+        // console.log("FILE CONTENT: ", JSON.parse(readJsonFile))
         response.send(authorArray)
         
     } catch (error) {
@@ -74,10 +79,11 @@ authorRouter.get("/", (request, response, next)=> {
 // Getting Single Author........
 
 
-authorRouter.get("/:authorId", (request, response, next)=> {
+authorRouter.get("/:authorId", async(request, response, next)=> {
     try {
         console.log("user id is : ", request.params.authorId)
-        const author = JSON.parse(fs.readFileSync(authorJSONPath))
+        // const author = JSON.parse(fs.readFileSync(authorJSONPath))
+        const author = await getAuthors()
         
     
         const findAuthorId = author.find(i => i.id === request.params.authorId)
@@ -95,15 +101,17 @@ authorRouter.get("/:authorId", (request, response, next)=> {
 
 // Update author here .............
 
-authorRouter.put("/:authorId", (request, response, next)=> {
+authorRouter.put("/:authorId", async(request, response, next)=> {
     try {
-        const author = JSON.parse(fs.readFileSync(authorJSONPath))
+        // const author = JSON.parse(fs.readFileSync(authorJSONPath))
+        const author = await getAuthors()
         const filterId = author.findIndex(index => index.id === request.params.authorId)
         const updateAuthor = {...author[filterId], ...request.body}
         console.log("Updated user id is:", request.params.authorId);
     
         author[filterId] = updateAuthor
-        fs.writeFileSync(authorJSONPath, JSON.stringify(author))
+        // fs.writeFileSync(authorJSONPath, JSON.stringify(author))
+        await writeAuthors()
         response.send(updateAuthor)
         
     } catch (error) {
@@ -115,11 +123,13 @@ authorRouter.put("/:authorId", (request, response, next)=> {
 // Delete author here.....
 
 
-authorRouter.delete("/:authorId", (request, response, next)=> {
+authorRouter.delete("/:authorId", async(request, response, next)=> {
     try {
-        const author = JSON.parse(fs.readFileSync(authorJSONPath))
+        // const author = JSON.parse(fs.readFileSync(authorJSONPath))
+        const author = await getAuthors()
         const restOfUsers  = author.filter(users => users.id !== request.params.authorId)
-        fs.writeFileSync(authorJSONPath, JSON.stringify(restOfUsers))
+        // fs.writeFileSync(authorJSONPath, JSON.stringify(restOfUsers))
+        await writeAuthors(restOfUsers)
         console.log("Deleted user id is:", request.params.authorId);
         response.status(204).send()
         
