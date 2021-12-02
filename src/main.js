@@ -6,6 +6,8 @@ import authorRouter from "./services/blogs/index.js"
 
 import cors from 'cors'
 
+import { join } from "path"
+
 import {badRequestHandler, unauthorizedHandler, notFoundHandler} from './handleErrors.js'
 
 const server = express()
@@ -26,7 +28,8 @@ console.table(listEndpoints(server))
 
 
 // Errors are here
-
+const publicFolderPath = join(process.cwd(), "./public")
+server.use(express.static(publicFolderPath))
 server.use(badRequestHandler)
 server.use(unauthorizedHandler)
 server.use(notFoundHandler)

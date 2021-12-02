@@ -7,6 +7,8 @@ import createHttpError from "http-errors"
 import { validationResult } from "express-validator"
 import { authorValidation } from "./validation.js"
 import { getAuthors, writeAuthors} from "../../library/fs-tools.js"
+import { saveAuthorsAvatars } from "../../library/fs-tools.js"
+import multer from 'multer'
 const authorRouter = express.Router()
 
 
@@ -24,9 +26,12 @@ const authorRouter = express.Router()
 // Posting Here....
 
 
-authorRouter.post("/", authorValidation, async(request, response, next)=> {
+authorRouter.post("/:authorId/uploadAvatar", multer().single("profilePic"), authorValidation, async(request, response, next)=> {
 
     try {
+        console.log("File", request.file);
+        response.send("ok")
+        await saveAuthorsAvatars(request.file.originalname, request.file.buffer)
         const errorsList = validationResult(request)
         if(!errorsList.isEmpty()){
             next(createHttpError(400, "Some errors occured in  request body", {errorsList}))
@@ -67,7 +72,7 @@ authorRouter.get("/", async(request, response, next)=> {
         // const authorArray = JSON.parse(readJsonFile)
         const author = await getAuthors()
         // console.log("FILE CONTENT: ", JSON.parse(readJsonFile))
-        response.send(authorArray)
+        response.send(author)
         
     } catch (error) {
         next(error)
