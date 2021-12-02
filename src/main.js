@@ -10,7 +10,7 @@ import {badRequestHandler, unauthorizedHandler, notFoundHandler} from './handleE
 
 const server = express()
 
-const port = 3004
+const port = 3004       
 
 server.use(cors())
 server.use(express.json())
