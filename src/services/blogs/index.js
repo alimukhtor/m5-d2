@@ -91,50 +91,36 @@ authorRouter.post("/:authorId/uploadAvatar", uploader, authorValidation, async(r
 
 // STARTING OF POSTING MULTIPLE FILES
 
-// const uploader = multer({
-//     fileFilter: (request, file, next) => {
-//       if (file.mimetype !== "image/jpeg") {
-//         next(createHttpError(400, "only jpgs are allowed"))
-//       } else {
-//         next(null, true)
-//       }
-//     },
-//   }).array("avatarPic")
-// authorRouter.post("/:authorId/uploadAvatar", uploader, authorValidation, async(request, response, next)=> {
 
-//     try {
-//         console.log("File", request.files);
-//         const arrayOfPromises = request.files.map(file => saveAuthorsAvatars(file.originalname, file.buffer))
-//         await Promise.all(arrayOfPromises)
-//         response.send("ok")
-//         const errorsList = validationResult(request)
-//         if(!errorsList.isEmpty()){
-//             next(createHttpError(400, "Some errors occured in  request body", {errorsList}))
-//         }else{
+authorRouter.post("/", authorValidation, async(request, response, next)=> {
 
-//             console.log("Body", request.body);
-//             const newAuthor = {
-//                 ...request.body, 
-//                 id: uniqid(), 
-//                 createdAt: new Date(), 
-//                 updatedAt: new Date()
-//             }
-//             console.log(newAuthor);
+    try {
+        const errorsList = validationResult(request)
+        if(!errorsList.isEmpty()){
+            next(createHttpError(400, "Some errors occured in  request body", {errorsList}))
+        }else{
+
+            console.log("Body", request.body);
+            const newAuthor = {
+                ...request.body, 
+                id: uniqid(), 
+                createdAt: new Date(), 
+            }
         
-//             // const author = JSON.parse(fs.readFileSync(authorJSONPath))
-//             const author = await getAuthors()
+            // const author = JSON.parse(fs.readFileSync(authorJSONPath))
+            const author = await getAuthors()
         
-//             author.push(newAuthor)
-//             // fs.writeFileSync(authorJSONPath, JSON.stringify(author))
-//             await writeAuthors()
-//             response.status(201).send({id: newAuthor.id})
-//         }
+            author.push(newAuthor)
+            // fs.writeFileSync(authorJSONPath, JSON.stringify(author))
+            await writeAuthors()
+            response.status(201).send({id: newAuthor.id})
+        }
         
-//     } catch (error) {
-//         next(error)
-//     }
+    } catch (error) {
+        next(error)
+    }
    
-// })
+})
 
 // END OF POSTING MULTIPLE FILES
 
