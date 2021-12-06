@@ -112,7 +112,7 @@ authorRouter.post("/", authorValidation, async(request, response, next)=> {
         
             author.push(newAuthor)
             // fs.writeFileSync(authorJSONPath, JSON.stringify(author))
-            await writeAuthors()
+            await writeAuthors(author)
             response.status(201).send({id: newAuthor.id})
         }
         

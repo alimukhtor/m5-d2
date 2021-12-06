@@ -12,9 +12,22 @@ import {badRequestHandler, unauthorizedHandler, notFoundHandler} from './handleE
 
 const server = express()
 
-const port = 3004       
+const port = process.env.PORT 
 
-server.use(cors())
+
+const whiteList = [process.env.FE_LOCAL_URL]
+
+const corseOptions= {
+    origin: function(origin, next){
+        console.log("origin:", origin);
+        if(!origin || whiteList.indexOf(origin) !== -1){
+            next(null, true)
+        }else{
+            next(new Error("Smth went wrong in Cors"))
+        }
+    }
+}
+server.use(cors(corseOptions))
 server.use(express.json())
 
 
