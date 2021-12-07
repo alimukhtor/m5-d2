@@ -15,7 +15,7 @@ const server = express()
 const port = process.env.PORT 
 
 
-const whiteList = [process.env.FE_LOCAL_URL]
+const whiteList = [process.env.FE_LOCAL_URL, process.env.FE_REMOTE_URL]
 
 const corseOptions= {
     origin: function(origin, next){
