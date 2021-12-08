@@ -19,7 +19,7 @@ const whiteList = [process.env.FE_LOCAL_URL, process.env.FE_REMOTE_URL]
 
 const corseOptions= {
     origin: function(origin, next){
-        console.log("origin:", origin);
+        console.log("origin is :", origin);
         if(!origin || whiteList.indexOf(origin) !== -1){
             next(null, true)
         }else{
