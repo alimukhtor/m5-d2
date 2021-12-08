@@ -10,9 +10,15 @@ import { authorValidation } from "./validation.js"
 
 import { getAuthors, writeAuthors} from "../../library/fs-tools.js"
 
-import { saveAuthorsAvatars } from "../../library/fs-tools.js"
+import { saveAuthorsAvatars, getBlogsReadableStream } from "../../library/fs-tools.js"
+
+import { getPDFReadableStream } from "../../library/pdf-tools.js"
 
 import multer from 'multer'
+
+import { pipeline } from "stream"
+
+import { createGzip } from "zlib"
 
 
 import {extname} from "path"
@@ -162,6 +168,22 @@ authorRouter.get("/:authorId/uploadAvatar", async(request, response, next)=> {
             next(createHttpError(404,  `Author with an id of ${request.params.authorId} not found`))
         }
         
+    } catch (error) {
+        next(error)
+    }
+})
+
+authorRouter.get("/downloadPdf", async(request, response, next)=> {
+    try {
+        response.setHeader("Content-Disposition", "attachment; filename=alify.pdf") 
+        // const source = getBlogsReadableStream()
+        const source = getPDFReadableStream(getBlogsReadableStream())
+        // const transform = createGzip()
+        const destination = response
+        pipeline(source, destination, err => {
+            if(err) next(err);
+            console.log("Downloaded successfully!");
+        })
     } catch (error) {
         next(error)
     }
