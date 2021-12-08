@@ -173,13 +173,14 @@ authorRouter.get("/:authorId/uploadAvatar", async(request, response, next)=> {
     }
 })
 
-authorRouter.get("/downloadPdf", async(request, response, next)=> {
+authorRouter.get("/:authorId/downloadPdf", async(request, response, next)=> {
     try {
-        response.setHeader("Content-Disposition", "attachment; filename=alify.pdf") 
         // const source = getBlogsReadableStream()
         const author = await getAuthors()
-        console.log("Author is :", author);
-        const source = getPDFReadableStream(author)
+        const filterId = author.findIndex(index => index.id === request.params.authorId)
+        // console.log("Author is :", author);
+        response.setHeader("Content-Disposition", "attachment; filename=singleBlog.pdf") 
+        const source = getPDFReadableStream(filterId)
         // const transform = createGzip()
         const destination = response
         pipeline(source, destination, err => {
