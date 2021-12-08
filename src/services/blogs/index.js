@@ -178,6 +178,7 @@ authorRouter.get("/downloadPdf", async(request, response, next)=> {
         response.setHeader("Content-Disposition", "attachment; filename=alify.pdf") 
         // const source = getBlogsReadableStream()
         const author = await getAuthors()
+        console.log("Author is :", author);
         const source = getPDFReadableStream(author)
         // const transform = createGzip()
         const destination = response
