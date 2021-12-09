@@ -14,11 +14,15 @@ import { saveAuthorsAvatars, getBlogsReadableStream } from "../../library/fs-too
 
 import { getPDFReadableStream } from "../../library/pdf-tools.js"
 
+import { sendRegistrationEmail } from "../../library/email-tools.js"
+
 import multer from 'multer'
 
 import { pipeline } from "stream"
 
 import { createGzip } from "zlib"
+
+import json2csv from 'json2csv'
 
 
 import {extname} from "path"
@@ -192,6 +196,21 @@ authorRouter.get("/:authorId/downloadPdf", async(request, response, next)=> {
     }
 })
 
+
+authorRouter.get("/:authorId/downloadCSV", async(request, response, next) => {
+    try {
+        response.setHeader("Content-Disposition", "attachment; filename=singleBlog.csv") 
+        const source = getBlogsReadableStream()
+        const transform = new json2csv.Transform({fields: ["title", "text"]})
+        const destination = response
+        pipeline(source, transform, destination, err=> {
+            if(err) next(err)
+        })
+    } catch (error) {
+        next(error)
+    }
+})
+
 // Update author here .............
 
 authorRouter.put("/:authorId", async(request, response, next)=> {
@@ -226,6 +245,19 @@ authorRouter.delete("/:authorId", async(request, response, next)=> {
         console.log("Deleted user id is:", request.params.authorId);
         response.status(204).send()
         
+    } catch (error) {
+        next(error)
+    }
+})
+
+authorRouter.post("/:authorId/sendEmail", async(request, response, next)=> {
+    try {
+        console.log("reuqest body:", request.body);
+        const {email} = request.body
+
+        await sendRegistrationEmail(email)
+        response.status(201).send({message: "Email was sent the user id of", })
+            
     } catch (error) {
         next(error)
     }
