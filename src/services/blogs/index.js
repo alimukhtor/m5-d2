@@ -177,10 +177,10 @@ authorRouter.get("/:authorId/downloadPdf", async(request, response, next)=> {
     try {
         // const source = getBlogsReadableStream()
         const author = await getAuthors()
-        const filterId = author.findIndex(index => index.id === request.params.authorId)
+        const filterId = author.find(index => index.id === request.params.authorId)
         // console.log("Author is :", author);
         response.setHeader("Content-Disposition", "attachment; filename=singleBlog.pdf") 
-        const source = getPDFReadableStream(filterId)
+        const source =  getPDFReadableStream(filterId)
         // const transform = createGzip()
         const destination = response
         pipeline(source, destination, err => {

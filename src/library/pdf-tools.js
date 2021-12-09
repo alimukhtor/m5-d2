@@ -9,6 +9,16 @@ import PdfPrinter from "pdfmake"
 //     "avatar": "http://localhost:3004/img/authors/g2pcd9tkkwnuuha4.png"
 
 export const getPDFReadableStream = (filterId) => {
+   // let imagePart = {};
+  // if(filterId.cover){
+  //   const response = await axios.get(filterId.cover, {responseType:"arraybuffer"})
+  //   const blogCoverURLParts = filterId.cover.split("/")
+  //   const fileName = blogCoverURLParts[blogCoverURLParts.length-1];
+  //   const [id, extension] = fileName.split('.')
+  //   const base64 = response.data.toString("base64");
+  //   const base64Image= `data:image/${extension};base64,${base64}`
+  //   imagePart = {image: base64Image, width:500}
+  // }
     const fonts = {
       Helvetica: {
         normal: "Helvetica",
