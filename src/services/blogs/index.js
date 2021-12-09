@@ -12,7 +12,7 @@ import { getAuthors, writeAuthors} from "../../library/fs-tools.js"
 
 import { saveAuthorsAvatars, getBlogsReadableStream } from "../../library/fs-tools.js"
 
-import { getPDFReadableStream } from "../../library/pdf-tools.js"
+import { getPDFReadableStream, generatePDFAsync } from "../../library/pdf-tools.js"
 
 import { sendRegistrationEmail } from "../../library/email-tools.js"
 
@@ -191,6 +191,15 @@ authorRouter.get("/:authorId/downloadPdf", async(request, response, next)=> {
             if(err) next(err);
             console.log("Downloaded successfully!");
         })
+    } catch (error) {
+        next(error)
+    }
+})
+
+authorRouter.get("/PDFAsync", async(request, response, next)=> {
+    try {
+        const path = await generatePDFAsync({ firstName: "Bogdan", lastName: "Birau" })
+        response.send({ path })
     } catch (error) {
         next(error)
     }
