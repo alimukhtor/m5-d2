@@ -8,7 +8,7 @@ export const authorValidation = [
   // body("readTime.value").exists().withMessage("ReadTime value is a mandatory field!"), // calc at backend or send it from frontend
   // body("readTime.unit").exists().isLength({min:1}).withMessage("ReadTime unit is a mandatory field!"),
   // body("author.name").exists().isLength({min:1}).withMessage("Author name is a mandatory field!"),
-  body("author.avatar").exists().isLength({min:1}).withMessage("Author avatar is a mandatory field!"),
+  // body("author.avatar").exists().isLength({min:1}).withMessage("Author avatar is a mandatory field!"),
   body("text").exists().isLength({min:1}).withMessage("Content filed is a mandatory field!"),
 ]
 

@@ -9,16 +9,7 @@ import PdfPrinter from "pdfmake"
 //     "avatar": "http://localhost:3004/img/authors/g2pcd9tkkwnuuha4.png"
 
 export const getPDFReadableStream = (filterId) => {
-   // let imagePart = {};
-  // if(filterId.cover){
-  //   const response = await axios.get(filterId.cover, {responseType:"arraybuffer"})
-  //   const blogCoverURLParts = filterId.cover.split("/")
-  //   const fileName = blogCoverURLParts[blogCoverURLParts.length-1];
-  //   const [id, extension] = fileName.split('.')
-  //   const base64 = response.data.toString("base64");
-  //   const base64Image= `data:image/${extension};base64,${base64}`
-  //   imagePart = {image: base64Image, width:500}
-  // }
+  
     const fonts = {
       Helvetica: {
         normal: "Helvetica",
@@ -31,12 +22,12 @@ export const getPDFReadableStream = (filterId) => {
     const docDefinition = {
       content: [
         {
-          text: `${filterId.avatar}`, 
+          text: `${filterId.title}`, 
           style: "header",
         },
         "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Confectum ponit legam, perferendis nomine miserum, animi. Moveat nesciunt triari naturam.\n\n",
         {
-          text: `${filterId.title}`,
+          text: `${filterId.id}`,
           style: "subheader",
         },
         "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Confectum ponit legam, perferendis nomine miserum, animi. Moveat nesciunt triari naturam posset, eveniunt specie deorsus efficiat sermone instituendarum fuisse veniat, eademque mutat debeo. Delectet plerique protervi diogenem dixerit logikh levius probabo adipiscuntur afficitur, factis magistra inprobitatem aliquo andriam obiecta, religionis, imitarentur studiis quam, clamat intereant vulgo admonitionem operis iudex stabilitas vacillare scriptum nixam, reperiri inveniri maestitiam istius eaque dissentias idcirco gravis, refert suscipiet recte sapiens oportet ipsam terentianus, perpauca sedatio aliena video.",
