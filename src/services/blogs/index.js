@@ -12,7 +12,7 @@ import { getAuthors, writeAuthors} from "../../library/fs-tools.js"
 
 import { saveAuthorsAvatars, getBlogsReadableStream } from "../../library/fs-tools.js"
 
-import { getPDFReadableStream, generatePDFAsync } from "../../library/pdf-tools.js"
+import { getPDFReadableStream} from "../../library/pdf-tools.js"
 
 import { sendRegistrationEmail } from "../../library/email-tools.js"
 
@@ -99,7 +99,6 @@ authorRouter.post("/:authorId/uploadAvatar", uploader, authorValidation, async(r
    
 })
 
-// STARTING OF POSTING MULTIPLE FILES
 
 
 authorRouter.post("/", authorValidation, async(request, response, next)=> {
@@ -132,7 +131,6 @@ authorRouter.post("/", authorValidation, async(request, response, next)=> {
    
 })
 
-// END OF POSTING MULTIPLE FILES
 
 
 // Getting Here ......
@@ -196,21 +194,13 @@ authorRouter.get("/:authorId/downloadPdf", async(request, response, next)=> {
     }
 })
 
-authorRouter.get("/PDFAsync", async(request, response, next)=> {
-    try {
-        const path = await generatePDFAsync({ firstName: "Bogdan", lastName: "Birau" })
-        response.send({ path })
-    } catch (error) {
-        next(error)
-    }
-})
 
 
 authorRouter.get("/:authorId/downloadCSV", async(request, response, next) => {
     try {
         response.setHeader("Content-Disposition", "attachment; filename=singleBlog.csv") 
         const source = getBlogsReadableStream()
-        const transform = new json2csv.Transform({fields: ["title", "text"]})
+        const transform = new json2csv.Transform({fields: ["title", "text", "createdAt", "cover", "avatar"]})
         const destination = response
         pipeline(source, transform, destination, err=> {
             if(err) next(err)
@@ -265,7 +255,7 @@ authorRouter.post("/:authorId/sendEmail", async(request, response, next)=> {
         const {email} = request.body
 
         await sendRegistrationEmail(email)
-        response.status(201).send({message: "Email was sent the user id of", })
+        response.status(201).send({message: "Email was sent"})
             
     } catch (error) {
         next(error)
